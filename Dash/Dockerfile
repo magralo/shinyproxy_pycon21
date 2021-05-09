@@ -11,12 +11,8 @@ RUN pip install gunicorn
 RUN mkdir apps
 COPY apps/ /apps
 
+
 EXPOSE 8050
 
 WORKDIR /apps
 
-
-#docker build . -t shinyproxy-demo-dash
-### Coger el ID de la nueva imagen
-#### docker tag 9ee36ef76544  magralo95/shinyproxy-demo-dash
-#### docker push  magralo95/shinyproxy-demo-dash

@@ -1,0 +1,206 @@
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Build and push images
+
+
+on:
+  push:
+    branches:
+    - master
+    - development
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: cluster-1	   # TODO: update to cluster name
+  GKE_ZONE: us-central1-c   # TODO: update to cluster zone
+  IMAGEPROXY: shinyproxy-example-pycon21
+  SHINYAPPS: shinyapps
+  DASHAPPS: dashapps
+
+  
+
+jobs:
+  setup-build-publish:
+    name: Setup, Build and Publish public
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Setup gcloud CLI
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '290.0.1'
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ secrets.GKE_PROJECT }}
+
+    # Configure Docker to use the gcloud command-line tool as a credential
+    # helper for authentication
+    - run: |-
+        gcloud --quiet auth configure-docker
+    # Get the GKE credentials so we can deploy to the cluster
+    - run: |-
+        gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+    
+    
+    
+    #### Set the project for the container registry info
+    - name: Set project shinyproxy
+      run: |-
+        sed -i "s/xxprojidxx/$PROJECT_ID/g" application.yml
+
+    #### A visual set up for the landing page
+    - name: change name application shinyproxy
+      if: ${{ github.ref == 'refs/heads/development'}}
+      run: |-
+        sed -i 's/xxbranchxx/development/g' application.yml
+    
+
+    #### A visual set up for the landing page
+    - name: change name application shinyproxy
+      if: ${{ github.ref == 'refs/heads/master'}}
+      run: |-
+        sed -i 's/xxbranchxx/master/g' application.yml
+
+    - name: set container names in application.yml
+      run: |-
+        sed -i "s/xxshinyappsxx/$SHINYAPPS/g" application.yml
+        sed -i "s/xxdashappsxx/$DASHAPPS/g" application.yml
+
+    ### Does nothing, just debug
+    - name: visual change application shinyproxy
+      run: |-
+       cat application.yml
+    
+    ## the tag is the name of the branch
+    - name: Build shinyproxy
+      run: |-
+        docker build  \
+          --tag "gcr.io/$PROJECT_ID/$IMAGEPROXY:${GITHUB_REF##*/}" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          .
+    # Push the Docker image to Google Container Registry
+    # the tag is the name of the branch
+    - name: Publish shinyproxy image
+      run: |-
+        docker push "gcr.io/$PROJECT_ID/$IMAGEPROXY:${GITHUB_REF##*/}"
+    
+    ## the tag is the name of the branch
+    - name: Build shiny image
+      run: |-
+        docker build  \
+          --tag "gcr.io/$PROJECT_ID/$SHINYAPPS:${GITHUB_REF##*/}" \
+          Shiny/
+
+     #Push the Docker image to Google Container Registry
+    - name: Publish Shiny
+      run: |-
+        docker push "gcr.io/$PROJECT_ID/$SHINYAPPS:${GITHUB_REF##*/}"
+
+
+        ## the tag is the name of the branch
+    - name: Build dash image
+      run: |-
+        docker build  \
+          --tag "gcr.io/$PROJECT_ID/$DASHAPPS:${GITHUB_REF##*/}" \
+          Dash/
+
+     #Push the Docker image to Google Container Registry
+    - name: Publish Dash
+      run: |-
+        docker push "gcr.io/$PROJECT_ID/$DASHAPPS:${GITHUB_REF##*/}"
+
+    
+    - name: set project and imagename on deployment file
+      run: |-
+        sed -i "s/xxprojidxx/$PROJECT_ID/g" sp-deployment.yaml
+        sed -i "s/xxshinyappsxx/$IMAGEPROXY/g" sp-deployment.yaml
+        sed -i "s/xxbranchxx/${GITHUB_REF##*/}/g" sp-deployment.yaml
+
+
+    #- name: set branch on deployment file
+    #  if: ${{ github.ref == 'refs/heads/master'}}
+    #  run: |-
+    #    sed -i 's/xxbranchxx/master/g' sp-deployment.yaml
+
+    #- name: set branch on deployment file (development)
+    #  if: ${{ github.ref == 'refs/heads/development'}}
+    #  run: |-
+    #    sed -i 's/xxbranchxx/development/g' sp-deployment.yaml
+
+    - name: change name auth file (master) 
+      if: ${{ github.ref == 'refs/heads/master'}}
+      run: |-
+        sed -i 's/xxbranchxx/master/g' sp-authorization.yaml
+
+    - name: change name auth file (development)
+      if: ${{ github.ref == 'refs/heads/development'}}
+      run: |-
+        sed -i 's/xxbranchxx/development/g' sp-authorization.yaml
+
+    - name: visual change name deployment
+      if: ${{ github.ref == 'refs/heads/master'}}
+      run: |-
+       cat sp-deployment.yaml
+
+    - name: deployment (in case this is the first time on master)
+      if: ${{ github.ref == 'refs/heads/master'}}
+      run: |-
+        kubectl apply -f sp-deployment.yaml
+
+
+    - name: deployment (in case this is the first time on development)
+      if: ${{ github.ref != 'refs/heads/master'}}
+      run: |-
+        kubectl apply -f sp-deployment.yaml --namespace=development
+
+    - name: Delete deploy on master
+      if: ${{ github.ref == 'refs/heads/master'}}
+      run: |-
+        kubectl delete deployment shinyproxy
+
+
+    - name: Delete deploy on development 
+      if: ${{ github.ref != 'refs/heads/master'}}
+      run: |-
+        kubectl delete deployment shinyproxy --namespace=development
+      
+    - name: final deployment on master
+      if: ${{ github.ref == 'refs/heads/master'}}
+      run: |-
+          kubectl apply -f sp-deployment.yaml
+
+      
+    - name: final deployment on development 
+      if: ${{ github.ref != 'refs/heads/master'}}
+      run: |-
+          kubectl apply -f sp-deployment.yaml --namespace=development
+
+        
+
+    - name: auth
+      run: |-
+          kubectl apply -f sp-authorization.yaml
+
+
+    #- name: publish port
+    #  run: |-
+           #This name is for the deployment, apparetly the service does not work to publish it online
+    #      kubectl expose deployment shinyproxy --type=LoadBalancer --name=shinyonline --namespace=development
+    #      kubectl get services 
+      # Build the Docker image
+

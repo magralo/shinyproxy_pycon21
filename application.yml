@@ -1,5 +1,5 @@
 proxy:
-  title: Open Analytics Shiny Proxy
+  title: Open Analytics Shiny Proxy (xxbranchxx)
   logo-url: https://www.openanalytics.eu/shinyproxy/logo.png
   port: 8080
   authentication: simple
@@ -19,11 +19,26 @@ proxy:
     description: Application which demonstrates the basics of a Shiny app
     container-cmd: ["R", "-e", "shinyproxy::run_01_hello()"]
     container-image: openanalytics/shinyproxy-demo
+  
+  - id: dash_simple
+    display-name: Hello Dash
+    description: Application which demonstrates the basics of a Dash app
+    port: 8050
+    container-cmd: ["gunicorn", "--bind", "0.0.0.0:8050","app1:server"]
+    container-image: magralo95/shinyproxy-demo-dash
+
+  - id: pokedex
+    display-name: Pokedex
+    description: Application which demonstrates a more complex shinyapp
+    container-cmd: ["R", "-e", "shinyproxy::run_01_hello()"]
+    container-image: gcr.io/xxprojidxx/xxshinyappsxx:xxbranchxx
+  
   - id: dash simple
     display-name: Hello Dash
     description: Application which demonstrates the basics of a Dash app
+    port: 8050
     container-cmd: ["gunicorn", "--bind", "0.0.0.0:8050","app1:server"]
-    container-image: magralo95/shinyproxy-demo-dash
+    container-image: gcr.io/xxprojidxx/xxshinyappsxx:xxbranchxx
 
 logging:
   file:

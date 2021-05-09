@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: shinyproxy
-        image: shinyproxy-example
-        imagePullPolicy: Never
+        image: gcr.io/xxprojidxx/xxshinyproxyxx
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
