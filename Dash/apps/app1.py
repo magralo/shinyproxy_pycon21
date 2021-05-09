@@ -4,12 +4,21 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
-from flask import Flask
-
-server = Flask(__name__)
 
 
+#### DO NOT CHANGE FROM HERE 
+from flask import Flask 
+server = Flask(__name__) 
 app = dash.Dash(server=server)
+
+# in order to work on shinyproxy
+# see https://support.openanalytics.eu/t/what-is-the-best-way-of-delivering-static-assets-to-the-client-for-custom-apps/363/5
+app.config.suppress_callback_exceptions = True
+app.config.update({
+    'routes_pathname_prefix': os.environ['SHINYPROXY_PUBLIC_PATH'],
+    'requests_pathname_prefix': os.environ['SHINYPROXY_PUBLIC_PATH']
+})
+#### TO HERE
 
 df = pd.read_csv(
     'https://gist.githubusercontent.com/chriddyp/' +
@@ -47,13 +56,9 @@ app.layout = html.Div([
     )
 ])
 
-# in order to work on shinyproxy
-# see https://support.openanalytics.eu/t/what-is-the-best-way-of-delivering-static-assets-to-the-client-for-custom-apps/363/5
-app.config.suppress_callback_exceptions = True
-app.config.update({
-    'routes_pathname_prefix': os.environ['SHINYPROXY_PUBLIC_PATH'],
-    'requests_pathname_prefix': os.environ['SHINYPROXY_PUBLIC_PATH']
-})
 
+#### DO NOT CHANGE FROM HERE 
 if __name__ == '__main__':
     app.run_server(port=8050)
+
+#### TO HERE
