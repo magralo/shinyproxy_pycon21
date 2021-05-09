@@ -11,6 +11,7 @@ library(leaflet.extras)
 library(httr)
 library(jsonlite)
 library(shinyalert)
+library(ggimage)
 
 
 

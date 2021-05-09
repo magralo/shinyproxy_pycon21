@@ -1,6 +1,6 @@
 proxy:
-  title: Open Analytics Shiny Proxy (xxbranchxx)
-  logo-url: https://www.openanalytics.eu/shinyproxy/logo.png
+  title: Pycon2021 (xxbranchxx)
+  logo-url: https://2021.pycon.co/static/img/icon.svg
   port: 8080
   authentication: simple
   admin-groups: admins
@@ -13,6 +13,7 @@ proxy:
   container-backend: kubernetes
   kubernetes:
     internal-networking: true
+    image-pull-policy: Always
   specs:
   - id: 01_hello
     display-name: Hello Application
@@ -29,13 +30,13 @@ proxy:
 
   - id: pokedex
     display-name: Pokedex
-    description: Application which demonstrates a more complex shinyapp
-    container-cmd: ["R", "-e", "shinyproxy::run_01_hello()"]
+    description: Application which demonstrates a more complex shinyapp that runs with an image that we build in the deployment process
+    container-cmd: ["R", "-e", "shiny::runApp('/root/pokedex')"]
     container-image: gcr.io/xxprojidxx/xxshinyappsxx:xxbranchxx
   
-  - id: dash simple
-    display-name: Hello Dash
-    description: Application which demonstrates the basics of a Dash app
+  - id: dash_udi
+    display-name: Hello Dash (with my image)
+    description: Application which demonstrates the basics of a Dash app that runs with an image that we build in the deployment process
     port: 8050
     container-cmd: ["gunicorn", "--bind", "0.0.0.0:8050","app1:server"]
     container-image: gcr.io/xxprojidxx/xxdashappsxx:xxbranchxx
