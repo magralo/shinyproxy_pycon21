@@ -62,20 +62,13 @@ jobs:
       run: |-
         sed -i "s/xxprojidxx/$PROJECT_ID/g" application.yml
 
-    #### A visual set up for the landing page
-    - name: change name application shinyproxy
-      if: ${{ github.ref == 'refs/heads/development'}}
-      run: |-
-        sed -i 's/xxbranchxx/development/g' application.yml
-    
 
     #### A visual set up for the landing page
-    - name: change name application shinyproxy
-      if: ${{ github.ref == 'refs/heads/main'}}
+    - name: change branch shinyproxy
       run: |-
-        sed -i 's/xxbranchxx/main/g' application.yml
+        sed -i "s/xxbranchxx/${GITHUB_REF##*/}" application.yml
 
-    - name: set container names in application.yml
+    - name: set image names in application.yml
       run: |-
         sed -i "s/xxshinyappsxx/$SHINYAPPS/g" application.yml
         sed -i "s/xxdashappsxx/$DASHAPPS/g" application.yml

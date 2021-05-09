@@ -38,7 +38,7 @@ proxy:
     description: Application which demonstrates the basics of a Dash app
     port: 8050
     container-cmd: ["gunicorn", "--bind", "0.0.0.0:8050","app1:server"]
-    container-image: gcr.io/xxprojidxx/xxshinyappsxx:xxbranchxx
+    container-image: gcr.io/xxprojidxx/xxdashappsxx:xxbranchxx
 
 logging:
   file:
