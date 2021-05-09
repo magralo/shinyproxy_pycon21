@@ -2,7 +2,7 @@ FROM  magralo95/dacshiny
 ## R with tidyverse, plotly, DT, Janitor, shiny, rmarkdown, leaflet, ggthemes, lubridate, jsonlite, httr and factoextra already installed
 
 
-RUN R -e "install.packages(c('ggdark','leaflet.extras','shinyalert','janitor'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('ggdark','leaflet.extras','shinyalert','janitor','ggimage'), repos='https://cloud.r-project.org/')"
 
 # copy the app to the image
 RUN mkdir /root/pokedex
