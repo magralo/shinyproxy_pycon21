@@ -71,9 +71,9 @@ jobs:
 
     #### A visual set up for the landing page
     - name: change name application shinyproxy
-      if: ${{ github.ref == 'refs/heads/master'}}
+      if: ${{ github.ref == 'refs/heads/main'}}
       run: |-
-        sed -i 's/xxbranchxx/master/g' application.yml
+        sed -i 's/xxbranchxx/main/g' application.yml
 
     - name: set container names in application.yml
       run: |-
@@ -133,19 +133,19 @@ jobs:
 
 
     #- name: set branch on deployment file
-    #  if: ${{ github.ref == 'refs/heads/master'}}
+    #  if: ${{ github.ref == 'refs/heads/main'}}
     #  run: |-
-    #    sed -i 's/xxbranchxx/master/g' sp-deployment.yaml
+    #    sed -i 's/xxbranchxx/main/g' sp-deployment.yaml
 
     #- name: set branch on deployment file (development)
     #  if: ${{ github.ref == 'refs/heads/development'}}
     #  run: |-
     #    sed -i 's/xxbranchxx/development/g' sp-deployment.yaml
 
-    - name: change name auth file (master) 
-      if: ${{ github.ref == 'refs/heads/master'}}
+    - name: change name auth file (main) 
+      if: ${{ github.ref == 'refs/heads/main'}}
       run: |-
-        sed -i 's/xxbranchxx/master/g' sp-authorization.yaml
+        sed -i 's/xxbranchxx/main/g' sp-authorization.yaml
 
     - name: change name auth file (development)
       if: ${{ github.ref == 'refs/heads/development'}}
@@ -153,40 +153,40 @@ jobs:
         sed -i 's/xxbranchxx/development/g' sp-authorization.yaml
 
     - name: visual change name deployment
-      if: ${{ github.ref == 'refs/heads/master'}}
+      if: ${{ github.ref == 'refs/heads/main'}}
       run: |-
        cat sp-deployment.yaml
 
-    - name: deployment (in case this is the first time on master)
-      if: ${{ github.ref == 'refs/heads/master'}}
+    - name: deployment (in case this is the first time on main)
+      if: ${{ github.ref == 'refs/heads/main'}}
       run: |-
         kubectl apply -f sp-deployment.yaml
 
 
     - name: deployment (in case this is the first time on development)
-      if: ${{ github.ref != 'refs/heads/master'}}
+      if: ${{ github.ref != 'refs/heads/main'}}
       run: |-
         kubectl apply -f sp-deployment.yaml --namespace=development
 
-    - name: Delete deploy on master
-      if: ${{ github.ref == 'refs/heads/master'}}
+    - name: Delete deploy on main
+      if: ${{ github.ref == 'refs/heads/main'}}
       run: |-
         kubectl delete deployment shinyproxy
 
 
     - name: Delete deploy on development 
-      if: ${{ github.ref != 'refs/heads/master'}}
+      if: ${{ github.ref != 'refs/heads/main'}}
       run: |-
         kubectl delete deployment shinyproxy --namespace=development
       
-    - name: final deployment on master
-      if: ${{ github.ref == 'refs/heads/master'}}
+    - name: final deployment on main
+      if: ${{ github.ref == 'refs/heads/main'}}
       run: |-
           kubectl apply -f sp-deployment.yaml
 
       
     - name: final deployment on development 
-      if: ${{ github.ref != 'refs/heads/master'}}
+      if: ${{ github.ref != 'refs/heads/main'}}
       run: |-
           kubectl apply -f sp-deployment.yaml --namespace=development
 
