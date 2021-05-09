@@ -66,7 +66,7 @@ jobs:
     #### A visual set up for the landing page
     - name: change branch shinyproxy
       run: |-
-        sed -i "s/xxbranchxx/${GITHUB_REF##*/}" application.yml
+        sed -i "s/xxbranchxx/${GITHUB_REF##*/}/g" application.yml
 
     - name: set image names in application.yml
       run: |-
