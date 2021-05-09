@@ -10,10 +10,12 @@ proxy:
     groups: admins
   - name: jeff
     password: password
+  
   container-backend: kubernetes
   kubernetes:
     internal-networking: true
     image-pull-policy: Always
+  
   specs:
   - id: 01_hello
     display-name: Hello Application
