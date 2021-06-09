@@ -19,6 +19,7 @@ If you want you can watch this video for a more detailed explanation (TODO)
 
 4. Create an additional secret with the value of the name of your project (name it GKE_PROJECT)
 
+
 5. Push any change, the github actions should create the deployment of your app (i recommend that you do this step on the development branch)... Check the workloads to verify that the deployment is running ok.
 
 6. Replace xxbranchxx (you should make this step twice, one for each namespace/branch) of the sp-authorization.yaml file and the run the command: kubectl apply -f sp-authorization.yaml 
