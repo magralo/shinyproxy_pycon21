@@ -2,7 +2,7 @@
 
 Please feel free to clone and use this repo, the general idea of this is to be able to deploy shiny or dash applications using shinyproxy (https://www.shinyproxy.io/).
 
-If you want you can watch this video for a more detailed explanation (TODO)
+If you want you can watch this video for a more detailed explanation: https://www.youtube.com/watch?v=RdyFE3CVQ1U&ab_channel=magralo
 
 ## Initial set up
 
