@@ -2,7 +2,6 @@ proxy:
   title: Pycon2021 (xxbranchxx)
   logo-url: https://2021.pycon.co/static/img/icon.svg
   port: 8080
-  
   authentication: simple
   admin-groups: admins
   users:
@@ -12,8 +11,8 @@ proxy:
   - name: jeff
     password: password
   
-  container-backend: kubernetesj,ykas
-   kubernetes:
+  container-backend: kubernetes
+  kubernetes:
     internal-networking: true
     image-pull-policy: Always
   
