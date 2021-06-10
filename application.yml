@@ -12,8 +12,8 @@ proxy:
   - name: jeff
     password: password
   
-  container-backend: kubernetes
-  kubernetes:
+  container-backend: kubernetesj,ykas
+   kubernetes:
     internal-networking: true
     image-pull-policy: Always
   
