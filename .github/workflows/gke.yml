@@ -78,6 +78,7 @@ jobs:
       run: |-
        cat application.yml
     
+  
     ## the tag is the name of the branch
     - name: Build shinyproxy
       run: |-
