@@ -2,7 +2,7 @@
 
 Please feel free to clone and use this repo, the general idea of this is to be able to deploy shiny or dash applications using shinyproxy (https://www.shinyproxy.io/).
 
-If you want you can watch this video for a more detailed explanation (TODO)
+If you want you can watch this video for a more detailed explanation: https://www.youtube.com/watch?v=RdyFE3CVQ1U&ab_channel=magralo
 
 ## Initial set up
 
@@ -18,6 +18,7 @@ If you want you can watch this video for a more detailed explanation (TODO)
 3. Create a key for the Default compute service account	and upload the value of the json as a secret to your own repo (name it GKE_SA_SECRET)
 
 4. Create an additional secret with the value of the name of your project (name it GKE_PROJECT)
+
 
 5. Push any change, the github actions should create the deployment of your app (i recommend that you do this step on the development branch)... Check the workloads to verify that the deployment is running ok.
 
