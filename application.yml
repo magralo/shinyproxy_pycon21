@@ -1,5 +1,5 @@
 proxy:
-  title: Pycon2021 before speak (xxbranchxx)
+  title: Pycon2021 live (xxbranchxx)
   logo-url: https://2021.pycon.co/static/img/icon.svg
   port: 8080
   authentication: simple
